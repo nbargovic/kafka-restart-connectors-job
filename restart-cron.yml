@@ -1,0 +1,24 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: restart-connectors
+  namespace: confluent
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 120
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: restart-connectors
+              image: bargovic/restart-connectors:1.0.0
+              command: ['/bin/sh', '-c', '/opt/restart-connectors.sh https://"{{connect-rest-api-url}}" ${USERNAME} ${PASSWORD}' ]
+              envFrom:
+                - secretRef:
+                  name: credential-restart-connect
+          restartPolicy: OnFailure
