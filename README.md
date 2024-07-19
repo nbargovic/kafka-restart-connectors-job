@@ -12,8 +12,9 @@ docker buildx build --platform linux/amd64 --no-cache -t bargovic/restart-connec
 ```
 
 ### How to deploy to OpenShift
+Update secret.yml to contain the base64 of your connect api's username/password, or populate those values from a vault.
 ```
-kubectl apply -f secret.yaml -n confluent
+kubectl apply -f secret.yml -n confluent
 kubectl apply -f restart-cron.yml -n confluent
 ```
 
